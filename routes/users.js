@@ -1,28 +1,28 @@
-var express = require('express');
-var router = express.Router();
-var multer  = require('multer');
-var upload = multer({ dest: './uploads' });
+const express = require('express');
+const router = express.Router();
+const multer  = require('multer');
+const upload = multer({ dest: './uploads' });
 
-var User = require('../models/User.js');
+const User = require('../models/User.js');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   res.send('respond with a resource');
 });
 
-router.get('/register', function(req, res, next) {
+router.get('/register', (req, res, next) => {
   res.render('register', {
   	'title': 'Register'
   });
 });
 
-router.get('/login', function(req, res, next) {
+router.get('/login', (req, res, next) => {
   res.render('login', {
   	'title': 'Log In'
   });
 });
 
-router.post('/register', upload.single('profileimage'), function(req, res, next) {
+router.post('/register', upload.single('profileimage'), (req, res, next) => {
 	
 	// Get form values
 	let name = req.body.name;
@@ -88,7 +88,7 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
 
 
 		// Create User
-		User.createUser(newUser, function(err, user) {
+		User.createUser(newUser, (err, user) => {
 			if(err) throw err;
 			console.log(user);
 		});

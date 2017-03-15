@@ -7,7 +7,7 @@ const db = mongoose.connection;
 
 // User Schema
 
-var UserSchema = mongoose.Schema({
+let UserSchema = mongoose.Schema({
 	username: {
 		type: String,
 		index: true
