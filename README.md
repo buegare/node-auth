@@ -1,11 +1,16 @@
 # node-auth
 
-Express.js application.
+Simple Node.js application where an user can register, log in and be redirect to a members only area
 
-Also using:
+#### What's being used ?
 
-+ mongodb
-+ multer
-+ passport
-+ pug
-+ other fun stuff
+| FOR THIS | IS BEING USED THIS |
+| ------ | ------ |
+| Server | Express.js |
+| Database | MongoDB |
+| Database driver| Mongoose |
+| File Upload | Multer |
+| Templating | Pug |
+| Authentication | Passport |
+| Logger | Morgan |
+| Password encryption | Bcrypt |
