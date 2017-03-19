@@ -1,9 +1,12 @@
-extends layout
+extends ../layout
 
 block content
+	if message != ''
+		div.alert.alert-success 
+			p #{message}
 	h1 Log In
 	p Please login below
-	form(method='post', action='/users/register', enctype='multipart/form-data')
+	form(method='post', action='/users/login', enctype='multipart/form-data')
 		.form-group
 			label Username
 			input.form-control(name='username', type='text', placeholder='Username')

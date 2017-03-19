@@ -1,4 +1,4 @@
-extends layout
+extends ../layout
 
 block content
 	h1 Register
@@ -10,13 +10,13 @@ block content
 	form(method='post', action='/users/register', enctype='multipart/form-data')
 		.form-group
 			label Name
-			input.form-control(name='name', type='text', placeholder='Enter Name')
+			input.form-control(name='name', type='text', placeholder='Enter Name', value=(name))
 		.form-group
 			label Email
-			input.form-control(name='email', type='email', placeholder='Enter Email')
+			input.form-control(name='email', type='email', placeholder='Enter Email', value=(email))
 		.form-group
 			label Username
-			input.form-control(name='username', type='text', placeholder='Username')
+			input.form-control(name='username', type='text', placeholder='Username', value=(username))
 		.form-group
 			label Password
 			input.form-control(name='password', type='password', placeholder='Enter Password')

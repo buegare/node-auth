@@ -2,9 +2,7 @@
   "name": "nodeauth",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
-  },
+  "scripts": {},
   "dependencies": {
     "bcrypt": "^1.0.2",
     "body-parser": "^1.16.1",
@@ -23,5 +21,16 @@
     "passport-local": "^1.0.0",
     "pug": "^2.0.0-beta11",
     "serve-favicon": "^2.3.2"
-  }
+  },
+  "description": "Node/Express aplication to test authentication",
+  "main": "server.js",
+  "keywords": [
+    "Node.js",
+    "Express.js",
+    "Passport.js",
+    "MongoDB",
+    "Pug"
+  ],
+  "author": "Bruno Buegare",
+  "license": "ISC"
 }

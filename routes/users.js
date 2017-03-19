@@ -1,49 +1,48 @@
-const express = require('express');
-const router = express.Router();
-const multer  = require('multer');
-const upload = multer({ dest: './uploads' });
+const express 			= require('express');
+const router 			= express.Router();
+//const passport 			= require('passport');
+//const LocalStrategy 	= require('passport-local').Strategy;
+const multer  			= require('multer');
+const upload 			= multer({ dest: './uploads' });
 
-const User = require('../models/User.js');
+const User 				= require('../models/User.js');
 
-/* GET users listing. */
-router.get('/', (req, res, next) => {
-  res.send('respond with a resource');
-});
+// router.use(passport.initialize());
+// router.use(passport.session());
 
 router.get('/register', (req, res, next) => {
-  res.render('register', {
+  res.render('users/register', {
   	'title': 'Register'
   });
 });
 
 router.get('/login', (req, res, next) => {
-  res.render('login', {
-  	'title': 'Log In'
+  res.render('users/login', {
+  	title: 'Log In',
+  	message: req.flash('success')
   });
 });
 
 router.post('/register', upload.single('profileimage'), (req, res, next) => {
 	
-	// Get form values
-	let name = req.body.name;
-	let email = req.body.email;
-	let username = req.body.username;
-	let password = req.body.password;
-	let password2 = req.body.password2;
+	// Create a new user object with the information from the form
+	let user = {
+		name: req.body.name,
+		email: req.body.email,
+		username: req.body.username,
+		password: req.body.password,
+		password2: req.body.password2
+	};
 
 	// Check for Image Field
-	const checkImageField = (file) => {
-		if (file) {
-			console.log('Uploading image...');
-
+	const checkImageField = (req) => {
+		if (req.file) {
+			console.log('Uploading image...\n\n', req.file);
+			req.file.filename = `${req.body.username}-${req.file.originalname}`;
+			console.log('Changed name \n\n', req.file);
 			// File info
 			let image = {
-				'profileImageOriginalName': req.file.profileimage.originalname,
-				'profileImageName': 		req.file.profileimage.name,
-				'profileImageMime': 		req.file.profileimage.mimetype,
-				'profileImagePath': 		req.file.profileimage.path,
-				'profileImageExt': 			req.file.profileimage.extension,
-				'profileImageSize': 		req.file.profileimage.size
+				'profileImageOriginalName': req.file.filename
 			};
 
 			return image.profileImageName;
@@ -63,29 +62,28 @@ router.post('/register', upload.single('profileimage'), (req, res, next) => {
 	req.checkBody('email', 'Email not valid').isEmail();
 	req.checkBody('username', 'Username field is required').notEmpty();
 	req.checkBody('password', 'Password field is required').notEmpty();
-	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+	req.checkBody('password2', 'Passwords do not match').equals(user.password);
 
 	// Check for errors
 	let errors = req.validationErrors();
 
 	if(errors) {
-		res.render('register', {
+		res.render('users/register', {
 			errors: errors,
-			name: name,
-			email: email,
-			username: username,
-			password: password,
-			password2: password2
+			name: user.name,
+			email: user.email,
+			username: user.username,
+			password: user.password,
+			password2: user.password2
 		});
 	} else {
 		let newUser = new User({
-			name: name,
-			email: email,
-			username: username,
-			password: password,
-			profileimage: checkImageField(req.file)
+			name: user.name,
+			email: user.email,
+			username: user.username,
+			password: user.password,
+			profileimage: checkImageField(req)
 		});
-
 
 		// Create User
 		User.createUser(newUser, (err, user) => {
@@ -94,16 +92,60 @@ router.post('/register', upload.single('profileimage'), (req, res, next) => {
 		});
 	}
 
-	
-
 	// Success message
-	// req.flash('success', 'You are now registered and may log in');
-
-	// Redirect to home page
-	res.location('/');
-	res.redirect('/');
+	req.flash('success', 'You are now registered and may log in');
+  	res.redirect('/users/login');
 
 });
 
+
+
+// passport.serializeUser((user, done) => {
+// 	done(null, user.id);
+// });
+
+// passport.deserializeUser((id, done) => {
+// 	User.getUserById(id, (err, user) => {
+// 		done(err, user);
+// 	});
+// });
+
+// passport.use(new LocalStrategy((username, password, done) => {
+// 	User.getUserByUsername(username, (err, user) => {
+// 		if(err) throw err;
+// 		if(!user) {
+// 			console.log('Unknown user');
+// 			return done(null, false, {message: 'Unknown user'});
+// 		}
+// 	});
+
+// 	User.comparePassword(password, user.password, (err, isMatch) => {
+// 		if(err) throw err;
+// 		if(isMatch) {
+// 			return done(null, user);
+// 		} else {
+// 			console.log('Invalid password');
+// 			return done(null, false, {message: 'Invalid password'});
+// 		}
+// 	});
+// }));
+
+// router.post('/login', passport.authenticate('local', {failureRedirect:'/users/login', failureFlash: 'Invalid username or password'}), (req, res) => {
+// 	console.log('Authentication successful');
+// 	req.flash('sucess', 'You are logged in !');
+// 	res.redirect('/');
+// });
+
+// router.post('/login', 
+// 	passport.authenticate('local', { 
+// 		successRedirect: '/', 
+// 		failureRedirect: '/users/login', 
+// 		failureFlash: true
+// 	}), 
+// 	(req, res) => {
+// 		console.log(`Authentication successful #{req.user.username}`);
+//     	res.redirect('/');
+// 	}
+// );
 
 module.exports = router;
