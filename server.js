@@ -11,8 +11,12 @@ const logger            = require('morgan');
 const bodyParser        = require('body-parser');
 const passport          = require('passport');
 const LocalStrategy     = require('passport-local').Strategy;
+const config            = require('./config/server');
 
 const app = express();
+
+// Favicon
+app.use(favicon(path.join(__dirname, 'public', 'images', config.favicon)));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,9 +39,6 @@ app.set('views', path.join(__dirname, 'views'));
 
 // view engine setup
 app.set('view engine', 'pug');
-
-// Favicon
-app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 // Enable server to serve static files from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -93,4 +94,4 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-app.listen(3000, () => console.log('Server started on port 3000...'));
+app.listen(config.server.port, () => console.log(`Server started on port ${config.server.port}...`));

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const config = require('../config/mongodb');
 
-mongoose.connect('mongodb://localhost/nodeauth');
+mongoose.connect(`mongodb://${config.db.server}/${config.db.collection}`);
 
 const db = mongoose.connection;
 
