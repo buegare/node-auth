@@ -1,26 +1,18 @@
 const express 			= require('express');
 const router 			= express.Router();
-//const passport 			= require('passport');
-//const LocalStrategy 	= require('passport-local').Strategy;
+const passport 			= require('passport');
+const LocalStrategy 	= require('passport-local').Strategy;
 const multer  			= require('multer');
 const upload 			= multer({ dest: './uploads' });
 
 const User 				= require('../models/User.js');
 
-// router.use(passport.initialize());
-// router.use(passport.session());
-
 router.get('/register', (req, res, next) => {
-  res.render('users/register', {
-  	'title': 'Register'
-  });
+  res.render('users/register', { title: 'Register' });
 });
 
 router.get('/login', (req, res, next) => {
-  res.render('users/login', {
-  	title: 'Log In',
-  	message: req.flash('success')
-  });
+  res.render('users/login', { title: 'Log In' });
 });
 
 router.post('/register', upload.single('profileimage'), (req, res, next) => {
@@ -53,8 +45,6 @@ router.post('/register', upload.single('profileimage'), (req, res, next) => {
 			return image.profileImageName;
 		}
 	};
-
-	
 
 	// Form validation
 	req.checkBody('name', 'Name field is required').notEmpty();
@@ -93,59 +83,36 @@ router.post('/register', upload.single('profileimage'), (req, res, next) => {
 	}
 
 	// Success message
-	req.flash('success', 'You are now registered and may log in');
+	req.flash('success_msg', 'You are now registered and may log in');
   	res.redirect('/users/login');
 
 });
 
+passport.use(new LocalStrategy((username, password, done) => User.authenticate(username, password, done) ));
 
+passport.serializeUser((user, done) => done(null, user.id));
 
-// passport.serializeUser((user, done) => {
-// 	done(null, user.id);
-// });
+passport.deserializeUser((id, done) => {
+	User.getUserById(id, (err, user) => {
+		if (err) { return done(err); }
+		done(null, user);
+	});
+});
 
-// passport.deserializeUser((id, done) => {
-// 	User.getUserById(id, (err, user) => {
-// 		done(err, user);
-// 	});
-// });
+router.post('/login', 
+	passport.authenticate('local', { failureRedirect: '/users/login', 
+									 failureFlash: true	}),
+	(req, res) => {
+		req.flash('success_msg', 'Log in successfully');
+		req.flash('user', req.body.username);
+		res.redirect('/');
+	}
+);
 
-// passport.use(new LocalStrategy((username, password, done) => {
-// 	User.getUserByUsername(username, (err, user) => {
-// 		if(err) throw err;
-// 		if(!user) {
-// 			console.log('Unknown user');
-// 			return done(null, false, {message: 'Unknown user'});
-// 		}
-// 	});
-
-// 	User.comparePassword(password, user.password, (err, isMatch) => {
-// 		if(err) throw err;
-// 		if(isMatch) {
-// 			return done(null, user);
-// 		} else {
-// 			console.log('Invalid password');
-// 			return done(null, false, {message: 'Invalid password'});
-// 		}
-// 	});
-// }));
-
-// router.post('/login', passport.authenticate('local', {failureRedirect:'/users/login', failureFlash: 'Invalid username or password'}), (req, res) => {
-// 	console.log('Authentication successful');
-// 	req.flash('sucess', 'You are logged in !');
-// 	res.redirect('/');
-// });
-
-// router.post('/login', 
-// 	passport.authenticate('local', { 
-// 		successRedirect: '/', 
-// 		failureRedirect: '/users/login', 
-// 		failureFlash: true
-// 	}), 
-// 	(req, res) => {
-// 		console.log(`Authentication successful #{req.user.username}`);
-//     	res.redirect('/');
-// 	}
-// );
+router.get('/logout', (req, res) => {
+	req.logout();
+	req.flash('success_msg', 'You are now logged out');
+	res.redirect('/users/login');
+});
 
 module.exports = router;

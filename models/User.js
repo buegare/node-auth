@@ -5,6 +5,8 @@ mongoose.connect('mongodb://localhost/nodeauth');
 
 const db = mongoose.connection;
 
+db.on('error', console.error.bind(console, 'connection error:'));
+
 // User Schema
 
 let UserSchema = mongoose.Schema({
@@ -22,27 +24,33 @@ let UserSchema = mongoose.Schema({
 	profileimage: {	type: String }
 });
 
-
 const User = module.export = db.model('User', UserSchema);
 module.exports = User;
 
-module.exports.comparePassword = function(username, callback) {
-	console.log('comparePassword ****************');
-	bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
-		if(err) return callback(err);
-		callback(null, isMatch);
+module.exports.authenticate = function(username, password, cb) {
+	// Search for user in the database
+	this.findOne({username: username}, 'username password', (err, user) => {
+		if(err) {
+			console.err(err);
+			return cb(null, false, {message: 'A unknown error occured'});
+		}
+		// Return message if the user isn't found
+		if(!user) return cb(null, false, {message: 'Username unknown'});
+
+		// Check if credentials matches with the hashed password in the db
+		bcrypt.compare(password, user.password, (err, isMatch) => {
+			if(err) return cb(err);
+			return isMatch ?
+			cb(null, user) :
+			cb(null, false, {message: 'Invalid credentials for the user'});		
+			
+		});
 	});
+
 };
 
-module.exports.getUserByUsername = function(username, callback) {
-	console.log('getUserByUsername ****************');
-	let query = {username: username};
-	User.findOne(query, callback);
-};
-
-module.exports.getUserById = function(id, callback) {
-	console.log('getUserById ****************');
-	User.findById(id, callback);
+module.exports.getUserById = function(id, callback) { 
+	this.findById(id, callback); 
 };
 
 module.export.createUser = function(newUser, callback) {
