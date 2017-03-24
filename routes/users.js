@@ -2,10 +2,21 @@ const express 			= require('express');
 const router 			= express.Router();
 const passport 			= require('passport');
 const LocalStrategy 	= require('passport-local').Strategy;
-const multer  			= require('multer');
-const upload 			= multer({ dest: './uploads' });
-
 const User 				= require('../models/User.js');
+const multer  			= require('multer');
+const config            = require('../config/server');
+const path              = require('path');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(config.user_profile_image_destination_path));
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${req.body.username}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 router.get('/register', (req, res, next) => {
   res.render('users/register', { title: 'Register' });
@@ -24,26 +35,6 @@ router.post('/register', upload.single('profileimage'), (req, res, next) => {
 		username: req.body.username,
 		password: req.body.password,
 		password2: req.body.password2
-	};
-
-	// Check for Image Field
-	const checkImageField = (req) => {
-		if (req.file) {
-			console.log('Uploading image...\n\n', req.file);
-			req.file.filename = `${req.body.username}-${req.file.originalname}`;
-			console.log('Changed name \n\n', req.file);
-			// File info
-			let image = {
-				'profileImageOriginalName': req.file.filename
-			};
-
-			return image.profileImageName;
-		} else {
-			let image = {
-				'profileImageName': 'noimage.png'
-			};
-			return image.profileImageName;
-		}
 	};
 
 	// Form validation
@@ -72,7 +63,7 @@ router.post('/register', upload.single('profileimage'), (req, res, next) => {
 			email: user.email,
 			username: user.username,
 			password: user.password,
-			profileimage: checkImageField(req)
+			profileimage: req.file ? req.file.filename : 'noimage.png'
 		});
 
 		// Create User
@@ -104,7 +95,6 @@ router.post('/login',
 									 failureFlash: true	}),
 	(req, res) => {
 		req.flash('success_msg', 'Log in successfully');
-		req.flash('user', req.body.username);
 		res.redirect('/');
 	}
 );

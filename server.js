@@ -27,7 +27,11 @@ app.use(bodyParser.json());
 // configure Express  
 app.use(cookieParser('keyboard cat'));
 // Handle Express Sessions
-app.use(session({ secret: 'secret', saveUninitialized: true, resave: true, cookie: { maxAge: 60000 }}));
+app.use(session({ 
+  secret: 'secret', 
+  saveUninitialized: true, 
+  resave: true, 
+  cookie: { maxAge: 3600000 }}));
 // Passport init
 app.use(passport.initialize());
 app.use(passport.session());

@@ -1,7 +1,11 @@
 const express 	= require('express');
 const router 	= express.Router();
+const User 		= require('../models/User.js');
+const config    = require('../config/server');
+const path      = require('path');
 
 const ensureAuthenticated = (req, res, next) => {
+	// req.isAuthenticated() is a Passport.js function
 	if(req.isAuthenticated()) {
 		return next();
 	} else {
@@ -11,9 +15,11 @@ const ensureAuthenticated = (req, res, next) => {
 };
 
 router.get('/', ensureAuthenticated, (req, res) => {
+  console.log(req.user);
+  console.log(req.session);
   res.render('index', { 
   	title: 'Members',
-  	user: req.flash('user')
+  	profileimage_path: path.join(config.user_profile_image_path)
   });
 });
 

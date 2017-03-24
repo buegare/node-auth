@@ -9,4 +9,26 @@ a {
 
 .alert-message {
 	margin-top: 20px;
+	position: absolute;
+    width: 1140px;
+}
+
+.user-profile {
+	margin-top: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+}
+
+#user-profile-greeting {
+	margin-top: 20px;
+    padding-left: 5px;
+    font-style: italic;
+}
+
+.content-area {
+	margin-top: 90px;
 }
