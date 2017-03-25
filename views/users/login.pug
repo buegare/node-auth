@@ -2,9 +2,8 @@ extends ../layout
 
 block content
 	include ../messages
-	div.content-area
-		h1 Log In
-		p Please login below
+	div.form-area.clearfix
+		h1.text-center Log In
 		form(method='post', action='/users/login')
 			.form-group
 				label Username
@@ -12,4 +11,4 @@ block content
 			.form-group
 				label Password
 				input.form-control(name='password', type='password', placeholder='Enter Password')
-			input.btn.btn-default(name='submit', type='submit', value='Login')
+			input.btn.btn-info.pull-right(name='submit', type='submit', value='Login')

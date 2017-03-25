@@ -15,10 +15,8 @@ const ensureAuthenticated = (req, res, next) => {
 };
 
 router.get('/', ensureAuthenticated, (req, res) => {
-  console.log(req.user);
-  console.log(req.session);
   res.render('index', { 
-  	title: 'Members',
+  	title: 'Dashboard',
   	profileimage_path: path.join(config.user_profile_image_path)
   });
 });

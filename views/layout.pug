@@ -14,11 +14,11 @@ html
                 li    
                     div.user-profile(style={'background-image': 'url(' + profileimage_path  + user.profileimage + ');'})
                 li
-                    p#user-profile-greeting.text-success Hello, #{user.username}
+                    p#user-profile-greeting.text-success Hello, #{user.name}
         ul.nav.navbar-nav.navbar-right
             if user
-                li(class=(title == 'Members' ? 'active' : ''))
-                    a(href='/') Members
+                li(class=(title == 'Dashboard' ? 'active' : ''))
+                    a(href='/') Dashboard
                 li
                     a(href='/users/logout') Logout
             else
