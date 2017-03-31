@@ -57,6 +57,7 @@ router.post('/register', upload.single('profileimage'), (req, res, next) => {
 			password: user.password,
 			password2: user.password2
 		});
+		return;
 	} else {
 		let newUser = new User({
 			name: user.name,
